@@ -210,54 +210,6 @@ def train_discriminator(discriminator, dis_opt, real_data_samples, generator, d_
 
 
 
-def BLEU(reference_sample, test_sample, print_iteration=100, flag_print=True):
-  if flag_print:
-    print("--- --- ---\nStart BLEU")
-  pad = CLOSING_WORD
-  #################################################
-  reference = []
-  for line in reference_sample:
-    candidate = []
-    for i in line:
-      if i == pad:
-        break
-      candidate.append(i)
-
-    reference.append(candidate)
-  #################################################
-  hypothesis_list_leakgan = []
-  for line in test_sample:
-    while line[-1] == str(pad):
-      line.remove(str(pad))
-    hypothesis_list_leakgan.append(line)
-  #################################################
-  random.shuffle(hypothesis_list_leakgan)
-  #################################################
-
-  smoothing_function = SmoothingFunction().method1
-
-  mass_bleu = []
-  for ngram in range(2,6):
-      weight = tuple((1. / ngram for _ in range(ngram)))
-      bleu_leakgan = []
-      bleu_supervise = []
-      bleu_base2 = []
-      num = 0
-      for h in hypothesis_list_leakgan:
-          BLEUscore = nltk.translate.bleu_score.sentence_bleu(reference, h, weight, smoothing_function = smoothing_function)
-          num += 1
-          bleu_leakgan.append(BLEUscore)
-
-          if num%print_iteration == 0 and flag_print:
-            print(ngram, num, sum(bleu_leakgan)/len(bleu_leakgan))
-          
-      mass_bleu.append(1.0 * sum(bleu_leakgan) / len(bleu_leakgan))
-      if flag_print:
-        print('--- --- ---')
-        print(len(weight), '-gram BLEU score : ', 1.0 * sum(bleu_leakgan) / len(bleu_leakgan), "\n")
-  return mass_bleu
-
-
 
 def save_models(data_file_tensor_train, gen, dis, gen_optimizer, dis_optimizer, name):
   state = {
@@ -357,11 +309,6 @@ for i, output in enumerate(output_function):
 
 
 
-print("BLEU score of training set")
-BLEU(data_file_test.tolist(), data_file_train[:500].tolist(), print_iteration=100)
-
-
-
 gen = Generator(GEN_EMBEDDING_DIM, GEN_HIDDEN_DIM, VOCAB_SIZE, MAX_SEQ_LEN, gpu=CUDA)
 dis = Discriminator(DIS_EMBEDDING_DIM, DIS_HIDDEN_DIM, VOCAB_SIZE, MAX_SEQ_LEN, gpu=CUDA)
 
@@ -399,14 +346,6 @@ print("Degree:", degree)
 samples = gen.sample(60, degree=degree).cpu().detach().numpy()
 
 output_function = []
-for i, samp in enumerate(samples):
-  line = [word[x] for x in samp]
-  line = ' '.join(line)
-  output_function.append(line)
-  bleu = BLEU(data_file_test.tolist(), [samp], flag_print=False)
-  print("#", i, "\tExample: ", line)
-
-
 
 from tqdm import tqdm
 samples1 = gen.sample(50, degree=1.5).cpu().detach().numpy().tolist()
@@ -474,19 +413,10 @@ degree = 2
 print("Degree:", degree)
 samples = gen.sample(10, degree=degree,start_letter = 0).cpu().detach().numpy()
 output_function = []
-for i, samp in enumerate(samples):
-  line = [word[x] for x in samp]
-  line = ' '.join(line)
-  output_function.append(line)
-  bleu = BLEU(data_file_test.tolist(), [samp], flag_print=False)
-  print("#", i, "\tExample: ", line)
 
 
-print("BLEU score of text, generated after SeqGAN training")
 degree = 1
 print("Degree:", degree)
-
-BLEU(data_file_test.tolist(), gen.sample(500, degree=degree).cpu().detach().numpy().tolist(), print_iteration=100)
 
 
 print("Examples of generated sentences with SeqGAN")
@@ -495,17 +425,8 @@ print("Degree:", degree)
 samples = gen.sample(20, degree=degree).cpu().detach().numpy()
 
 output_function = []
-for i, samp in enumerate(samples):
-  line = [word[x] for x in samp]
-  line = ' '.join(line)
-  output_function.append(line)
-  bleu = BLEU(data_file_test.tolist(), [samp], flag_print=False)
-  print("#", i, "\tExample: ", line)
 
 
-
-
-BLEU(data_file_test.tolist(), gen.sample(500, degree=degree).cpu().detach().numpy().tolist(), print_iteration=100)
 
 
 [data_file_tensor_train, gen, dis, gen_optimizer, dis_optimizer,
@@ -595,16 +516,6 @@ print("Degree:", degree)
 samples = gen.sample(50, degree=degree).cpu().detach().numpy()
 
 output_function = []
-for i, samp in enumerate(samples):
-  line = [word[x] for x in samp]
-  line = ' '.join(line)
-  output_function.append(line)
-  bleu = BLEU(data_file_test.tolist(), [samp], flag_print=False)
-  print("#", i, "\tExample: ", line)
-
-
-
-
 
 print("Examples of generated sentences with SeqGAN")
 degree = 1.5
@@ -612,13 +523,6 @@ print("Degree:", degree)
 samples = gen.sample(50, degree=degree).cpu().detach().numpy()
 
 output_function = []
-for i, samp in enumerate(samples):
-  line = [word[x] for x in samp]
-  line = ' '.join(line)
-  output_function.append(line)
-  bleu = BLEU(data_file_test.tolist(), [samp], flag_print=False)
-  print("#", i, "\tExample: ", line)
-
 
 
 
@@ -628,11 +532,3 @@ print("Degree:", degree)
 samples = gen.sample(50, degree=degree).cpu().detach().numpy()
 
 output_function = []
-for i, samp in enumerate(samples):
-  line = [word[x] for x in samp]
-  line = ' '.join(line)
-  output_function.append(line)
-  bleu = BLEU(data_file_test.tolist(), [samp], flag_print=False)
-  print("#", i, "\tExample: ", line)
-
-
