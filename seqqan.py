@@ -510,25 +510,4 @@ print(1-np.mean(diversity))
 
 
 
-print("Examples of generated sentences with SeqGAN")
-degree = 1
-print("Degree:", degree)
-samples = gen.sample(50, degree=degree).cpu().detach().numpy()
 
-output_function = []
-
-print("Examples of generated sentences with SeqGAN")
-degree = 1.5
-print("Degree:", degree)
-samples = gen.sample(50, degree=degree).cpu().detach().numpy()
-
-output_function = []
-
-
-
-print("Examples of generated sentences with SeqGAN")
-degree = 2
-print("Degree:", degree)
-samples = gen.sample(50, degree=degree).cpu().detach().numpy()
-
-output_function = []
