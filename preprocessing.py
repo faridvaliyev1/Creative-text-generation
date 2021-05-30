@@ -43,9 +43,9 @@ print('The number of appearances of the least frequent word:', most_words[-1][0]
 vocab = dict()
 for i in range(len(most_words)):
     vocab[most_words[i][0]] = i
-vocab['']=len(vocab) # добавить пробел (заполнитель)
-vocab['_UNK_']=len(vocab) # добавить удаленное слово (удаляемые слова заменяются этим словом)
-vocab['_START_']=len(vocab) # добавить стартовое слово в словарь
+vocab['']=len(vocab) 
+vocab['_UNK_']=len(vocab) 
+vocab['_START_']=len(vocab)
 
 d = vocab
 list_d = list(d.items())

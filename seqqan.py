@@ -74,7 +74,7 @@ def sampler_example(batch_size):
   y = np.concatenate([x[:, 1:], np.zeros([batch_size, 1])+VOCAB_SIZE-2], axis=-1)
   return x, y
 
-# функция генерации реалиных данных
+
 def sampler_example_test(batch_size):
   x = data_file_test[np.random.randint(0, len(data_file_test), batch_size)]
   y = np.concatenate([x[:, 1:], np.zeros([batch_size, 1])+VOCAB_SIZE-2], axis=-1)
@@ -91,7 +91,7 @@ def train_generator_MLE(gen, gen_opt, real_samples_train, real_samples_test, epo
         sys.stdout.flush()
         total_loss = 0
 
-        # обучение
+        
         for i in range(0, len(real_samples_train), BATCH_SIZE):
             inp_train, target_train = helpers.prepare_generator_batch(real_samples_train[i:i + BATCH_SIZE], start_letter=START_LETTER,
                                                           gpu=CUDA)
@@ -111,7 +111,7 @@ def train_generator_MLE(gen, gen_opt, real_samples_train, real_samples_test, epo
         total_loss = total_loss / ceil(len(real_samples_train) / float(BATCH_SIZE)) / MAX_SEQ_LEN
         print(' average_train_NLL = %.4f' % total_loss, end='')
 
-        # тестирование
+       
         test_loss = 0
 
         for i in range(0, len(real_samples_test), BATCH_SIZE):
@@ -141,7 +141,7 @@ def test_mle(gen, real_samples_train, real_samples_test):
   test_loss = test_loss / ceil(len(real_samples_test) / float(BATCH_SIZE)) / MAX_SEQ_LEN
   print(' average_test_NLL = %.4f' % test_loss)
 
-# функция обучения генератора на основе обучения с подкреплением RL
+
 def train_generator_PG(gen, gen_opt, dis, num_batches):
     """
     The generator is trained using policy gradients, using the reward from the discriminator.
@@ -385,7 +385,7 @@ gen_optimizer = optim.Adam(gen.parameters())#, lr=0.0002
 train_generator_MLE(gen, gen_optimizer, data_file_tensor_train, data_file_tensor_test, 3) # MLE_TRAIN_EPOCHS
 
 test_mle(gen, data_file_tensor_train, data_file_tensor_test)
-# сохранение результата обучения
+
 save_models(data_file_tensor_train, gen, dis, gen_optimizer, dis_optimizer,
             FILE_PATHS['saved_models'] + r'/' + r'seqgan_mle.pytorch')
 
@@ -434,7 +434,7 @@ print('Pre-training discriminator...')
 #, weight_decay=1e-5) 
 train_discriminator(dis, dis_optimizer, data_file_tensor_train, gen, 10, 1)#25, 1 | (15, 3), (25, 1)
 
-# сохранение результата обучения
+
 save_models(data_file_tensor_train, gen, dis, gen_optimizer, dis_optimizer,
             FILE_PATHS['saved_models'] + r'/' + r'seqgan_pretraining_dis.pytorch')
 
@@ -450,15 +450,15 @@ print('\nStarting Adversarial Training...')
 
 for epoch in range(ADV_TRAIN_EPOCHS):# ADV_TRAIN_EPOCHS
     print('\n--------\nEPOCH %d\n--------' % (epoch+1))
-    # обучение генератора
+    
     print('\nAdversarial Training Generator : ', end='')
     train_generator_PG(gen, gen_optimizer, dis, 1)#
 
-    # тестирование nll
+    
     print('\nTesting Generator : ', end='')
     test_mle(gen, data_file_tensor_train, data_file_tensor_test)
 
-    # обучение дискриминатора
+    
     print('\nAdversarial Trainin+++++++++++++++++++++++++g Discriminator : ')
     train_discriminator(dis, dis_optimizer, data_file_tensor_train, gen, 3, 1)#3, 1
 
@@ -503,7 +503,7 @@ for i, samp in enumerate(samples):
   print("#", i, "\tExample: ", line)
 
 
-print("Оценка качества генерации текстов на основе BLEU, после обучения с помощью SeqGAN")
+
 
 BLEU(data_file_test.tolist(), gen.sample(500, degree=degree).cpu().detach().numpy().tolist(), print_iteration=100)
 
